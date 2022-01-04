@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="7d403acc-9087-4935-9a91-cad5dfde3cb0" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<file:config name="readoperation" doc:name="File Config" doc:id="62df9539-6876-4ecc-a78d-08c259599567" >
+		<file:connection workingDir="C:\Users\y lokesh\OneDrive\Documents\read" />
+	</file:config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="81fc651d-9e13-4c77-b702-7dfacf061fb0" >
+		<file:connection workingDir="C:\Users\y lokesh\OneDrive\Documents\read" />
+	</file:config>
+	<file:config name="File_Config1" doc:name="File Config" doc:id="dd676951-3648-4074-b1b3-760ba1a09553" >
+		<file:connection workingDir="C:\Users\y lokesh\OneDrive\Documents\read" />
+	</file:config>
+	<flow name="readoperationFlow" doc:id="4ec7a355-7436-45d2-bc0c-c16cc1cb2f66" >
+		<http:listener doc:name="Listener" doc:id="7e9cfb1d-88e9-4ba3-9b23-4ee27e7579d4" config-ref="HTTP_Listener_config" path="/readoperation"/>
+		<file:read doc:name="Read" doc:id="94ed8fbe-1488-4029-8cf5-3dac1518ef3a" config-ref="readoperation" path="read.txt" target="read1"/>
+		<choice doc:name="Choice" doc:id="fd3542e3-6d57-4d96-b443-1b15897ee21d">
+			<when expression="isEmpty(payload)">
+				<file:write doc:name="Write" doc:id="3f2467b1-b292-47dd-914f-9d9cb9a3c146" config-ref="File_Config1" path="writen" mode="CREATE_NEW"/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="7c44d979-ac0e-48ad-9299-922041f9142e">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	name:"lokesh",
+	fileoutput:vars.read1
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="38ce56ee-6453-43f6-89d0-22232ca72180" message="#[payload]" />
+				<file:write doc:name="Write" doc:id="5533b491-237b-4223-b1ec-4adb95032829" config-ref="File_Config" path="write file" mode="CREATE_NEW" />
+			</otherwise>
+		</choice>
+		<set-payload value="text is return sucessfully" doc:name="Set Payload" doc:id="b89ae103-4a33-4bae-901a-ba464b9ed775" />
+		<logger level="INFO" doc:name="Logger" doc:id="a491df45-26f5-4a64-8781-5f186cb477cb" message="text is return sucessfully"/>
+	</flow>
+</mule>

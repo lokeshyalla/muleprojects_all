@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="804e6131-f005-43e6-99e0-02108d22f710" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="error_handlingFlow" doc:id="46b15d47-fff6-489f-9de8-35bd9f22be6d" >
+		<http:listener doc:name="Listener" doc:id="397bd274-56e8-47ca-a3e9-a92ec5079b5e" config-ref="HTTP_Listener_config" path="/error handing"/>
+		<set-payload value='#["that"]' doc:name="Set Payload" doc:id="4415ee85-7003-46f8-8576-97bbda4624df" />
+		<flow-ref doc:name="Flow Reference" doc:id="69214662-e7cb-47fe-bb97-f8f07c5eff10" name="error_handlingFlow1" />
+	</flow>
+	<flow name="error_handlingFlow1" doc:id="782cf351-db8a-4dde-a035-b4fb96b096c4" >
+		<http:request method="GET" doc:name="Request" doc:id="e0634e94-2e40-426d-a25e-e09b11871bd2" url="hgchvk.com"/>
+		<set-payload value='#["this"]' doc:name="Set Payload" doc:id="a2864618-981e-4eb6-9d0f-77c3909fb36f" />
+		<error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="47db86a7-4365-49c2-a618-e3fbcb581204" type="HTTP:CONNECTIVITY">
+				<ee:transform doc:name="Transform Message" doc:id="8d1e4580-70c9-4874-ba2f-2724095750c3">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

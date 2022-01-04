@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="fed6bbe1-756e-43b2-8540-cdb70987bf69" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="dw1demoFlow" doc:id="ae44052d-f79e-4735-9dec-d6ab531bbe19" >
+		<http:listener doc:name="Listener" doc:id="b0a0c040-3ae9-4136-9d5e-e1454ed53e67" config-ref="HTTP_Listener_config" path="/dw1demo"/>
+		<set-payload value="#[1 as Number]" doc:name="Set Payload" doc:id="f307cb76-9073-4811-94a4-3f0908b10339" />
+		<choice doc:name="Choice" doc:id="3dbb8e63-3244-41aa-afba-e89a4b0ed946">
+			<when expression="#[isEven(payload)]">
+				<ee:transform doc:name="Transform Message" doc:id="40ebf855-ff26-43d5-8d1f-a396b3252064" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+   NumberPassed: "it is even"	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<set-payload value="#[payload]" doc:name="Set Payload" doc:id="3ebbe8ae-fbd7-40e9-9796-9163979732fd" />
+				<logger level="INFO" doc:name="Logger" doc:id="68990380-82bb-4086-a15c-69c42e973707" />
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

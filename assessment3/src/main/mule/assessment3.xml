@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6997b7b6-1dcf-4c3e-a6d2-2db190cfa11f" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="assessment3Flow" doc:id="c70ac3c7-dc11-4f40-a6f6-6955712f7645">
+		<http:listener doc:name="Listener" doc:id="c1bad8e8-cf29-4878-9b50-a80adb13eeaa" config-ref="HTTP_Listener_config" path="assessmennt3" />
+		<set-variable value="#[attributes.queryParams.q1]" doc:name="Set Variable" doc:id="42acddf3-3909-4670-97fb-8ac53688b517" variableName="params" />
+		<choice doc:name="Choice" doc:id="46a6b17b-eee9-464a-9669-8e3053390c6f">
+			<when expression="#[isEmpty[payload]]" >
+				<ee:transform doc:name="Transform Message" doc:id="003130e2-2374-4f86-8a9d-66dcc57bc3aa" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Number": "it is even"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise>
+				<set-payload value="valid number " doc:name="Set Payload" doc:id="4866cbc1-da9c-455e-878b-4f0cef06cc1e" />
+				<logger level="INFO" doc:name="Logger" doc:id="dcee2b25-dcd9-45d5-bb58-1424fafaa016" message="valid number" />
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

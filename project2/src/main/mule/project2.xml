@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b805b652-d5e9-483a-82bf-9d2d83e35007" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="project2Flow" doc:id="488b43ce-09ae-4cf3-9670-856ebd6e2469" >
+		<http:listener doc:name="Listener" doc:id="92888312-b5a1-46b8-bb1e-2bb3fecaceff" config-ref="HTTP_Listener_config" path="/project3"/>
+		<java:new doc:name="New" doc:id="554d78da-aed6-49b7-aa04-e07acc8db357" class="project2.sales" target="abc" constructor="sales()"/>
+		<java:invoke doc:name="Invoke" doc:id="f65ac01b-e310-4ffe-adde-7e64ce4664b4" class="project2.sales" instance="#[vars.abc]" method="getAmount(java.lang.String)"/>
+		<ee:transform doc:name="Transform Message" doc:id="2b8a5eee-a947-41d6-81db-7a3efa83d912" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"the Amount is": payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="project2Flow2" doc:id="610b7f61-19f1-45fa-a1bf-ce7a824a1e0d" >
+		<http:listener doc:name="Listener" doc:id="eb558db5-f400-4476-a205-0957fa9f9f79" config-ref="HTTP_Listener_config" path="/project2"/>
+		<java:invoke-static doc:name="Invoke static" doc:id="8d6d8d50-2c8d-47c6-85f7-a71c4c629cf3" class="project2.sales" method="getproductid(int)" />
+		<set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="7d1878de-20db-4997-9b9c-f1c5f388e278" variableName="Correlatioid"/>
+		<logger level="INFO" doc:name="Logger" doc:id="d13a53a0-79b4-4ea2-ba2d-bc5b44759235" message="Correlationd-#[vars.Correlatioid]"/>
+		<choice doc:name="Choice" doc:id="be06441a-69d0-41c7-9004-896aa34f1434" >
+			<when expression="#[payload==true]">
+				<logger level="INFO" doc:name="Logger" doc:id="f8ad8cc3-213f-4823-8df8-0eee54a174bb" />
+				<set-payload value="#[payload]" doc:name="Set Payload" doc:id="59762529-4b7b-43fc-83db-40636bfcf8bc" />
+			</when>
+			<otherwise>
+				<set-payload value="#[payload]" doc:name="Set Payload" doc:id="7cdc1c9b-c6b4-4c28-b598-7a7d764109b2" />
+				<logger level="INFO" doc:name="Logger" doc:id="b541103c-1135-4962-8894-3e4f8d33bd8a" />
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

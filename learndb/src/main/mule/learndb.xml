@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="38e5cf8d-edf4-42b0-a504-431502dd15c3" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="225ebfe0-43ef-437f-8be6-268d1cad8b30" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="learndb"/>
+	</db:config>
+	<flow name="learndbFlow" doc:id="36495e4f-fa3b-47ad-a6a1-cfc8ceac17ae" >
+		<http:listener doc:name="Listener" doc:id="cc445e34-81d4-4f82-a61c-d516f52ba0a3" config-ref="HTTP_Listener_config" path="/llearn"/>
+		<db:select doc:name="Select" doc:id="d9b56b1b-0014-4437-97a3-c83e6c8e75ff" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM learndb.account_holders where account_no=:no;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	no:attributes.queryParams.no
+}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Choice" doc:id="38bb03b7-2877-4791-9201-348a02edf587" >
+			<when expression="#[isEmpty(payload)]">
+				<ee:transform doc:name="Transform Message" doc:id="c16df6b6-e801-4388-ba52-0c39addce80e" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"404 not found"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="66b9d4c8-f714-4837-b2ac-28869777a13e">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="871973c9-8e9f-4c2a-a0ab-90b2158d4719" />
+	</flow>
+	<flow name="learndbFlow1" doc:id="b7f0d6ed-c549-4723-b879-a7991d941057" >
+		<http:listener doc:name="Listener" doc:id="a36352ec-9174-43cf-8d0a-c41039c124ed" config-ref="HTTP_Listener_config" path="/insert"/>
+		<db:insert doc:name="Insert" doc:id="364c3f50-e222-459f-86bc-2325e1fba188" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO learndb.account_holders (account_no,name,contact,branch) VALUES (8036,'lok',9849694,'lo');]]></db:sql>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="9db32343-49e2-48e4-9ff1-8b972487a973" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

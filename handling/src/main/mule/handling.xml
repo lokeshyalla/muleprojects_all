@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a6f870f2-beb9-4f5c-b58b-cde08fdb92b1" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="handlingFlow" doc:id="553c07db-7333-4c23-9df2-8e219cf88411" >
+		<http:listener doc:name="Listener" doc:id="0e987096-58dc-41d9-8bc9-8b0876fc3386" config-ref="HTTP_Listener_config" path="/handing"/>
+		<flow-ref doc:name="Flow Reference" doc:id="bff00ba1-e8c7-4757-aff4-53722362ab19" name="handing_onError_continue_private"/>
+		<set-payload value='#["main fow"]' doc:name="Set Payload" doc:id="a7005059-264c-46b2-b559-8d0b6cb66a87" />
+	</flow>
+	<flow name="handing_onError_continue_private" doc:id="f7da99a8-248e-4fab-a7e0-dd78892f214d" >
+		<http:request method="GET" doc:name="Request" doc:id="e9038cd7-fc8c-491e-a9a6-60b9b090820a" url="tvthv.com"/>
+		<set-payload value='#["sub flow"]' doc:name="Set Payload" doc:id="70eed61d-b35b-4533-ad94-dbaad86e1bd2" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9dd97067-53ac-46ff-bb00-889f93759e71" type="HTTP:CONNECTIVITY">
+				<set-payload value='#["ok"]' doc:name="Set Payload" doc:id="ef4ced5a-929d-49d3-aca9-dd7a43cc8f2e" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

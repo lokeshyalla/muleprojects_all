@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="3dc24817-7a1e-4106-a613-f3158a40419d" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="helloworldlokeshFlow" doc:id="2f0e4a2d-1829-4859-b8b2-b99d9274622f" >
+		<http:listener doc:name="/Helloworld" doc:id="5bbd31fc-da08-4bea-94ee-c94cf3b15920" config-ref="HTTP_Listener_config" path="/Helloworld"/>
+		<set-variable value="#[uuid()]" doc:name="Correlationid" doc:id="38f8fb2a-7f37-45f9-bc20-1a13532af75f" variableName="Correlationid"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5150520f-ad56-4b8b-b9fa-36882fe5e4c8" message="Correlationid-#[vars.Correlationid]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="965ab9ed-8fbd-491b-8522-7166a65e6fd8" message="Correlationaid- #[vars.Correlationid]- recieved payload- #[payload]"/>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="8d55fb6c-964d-4137-ad18-6535d96eaf58" variableName="orignalpayload" />
+		<set-payload value="Helloworld" doc:name="Helloworld" doc:id="9f4c9098-870b-4866-a441-ada6945f4602" />
+		<ee:transform doc:name="Transform Message" doc:id="a5d19785-d9f5-4f92-82a7-f1040f9b8892">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+ "queryParameter":attributes.queryParams.q1,
+ "queryParameter":attributes.queryParams.q2
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="counter"><![CDATA[%dw 2.0
+output application/json
+---
+{
+count :1
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="helloworldlokeshSub_Flow" doc:id="5a006e1a-eb41-44ae-9ce8-008148ce188b" name="helloworldlokeshSub_Flow"/>
+		<flow-ref doc:name="helloworldlokeshprivateflow" doc:id="5294af91-ba00-4882-a671-d8c00fef6718" name="helloworldlokeshprivateflow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="b1933b30-9c9a-4957-84db-47fdce46ee28" message="Correlationid-#[vars.Correlationid]-#[payload]"/>
+	</flow>
+	<flow name="helloworldlokeshprivateflow" doc:id="467b58f4-b55a-4781-b28d-ae42b9492ff4" >
+		<logger level="INFO" doc:name="privateflowlogger" doc:id="fc9c4baf-540e-476d-9dd8-16ed9e8979f6" message="Correlationid-#[vars.Correlationid]privateflowlogger"/>
+	</flow>
+	<sub-flow name="helloworldlokeshSub_Flow" doc:id="bb62e725-97f6-4142-b6d2-7e2fe2c89437" >
+		<logger level="INFO" doc:name="sub flow logger" doc:id="10ed616b-17ca-4981-a1eb-621be687add8" message="Correlationid-#[vars.Correlationid]sub flow logger"/>
+	</sub-flow>
+</mule>

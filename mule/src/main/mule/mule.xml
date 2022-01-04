@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c39bd83d-4802-49ca-8206-d185f3b832d7" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="muleFlow" doc:id="43551a74-c2a9-4018-a8b9-23083cb0ec27" >
+		<http:listener doc:name="Listener" doc:id="bd23c81f-8c28-430a-a3fe-42337e8b6470" config-ref="HTTP_Listener_config" path="mule"/>
+		<http:request method="GET" doc:name="Request" doc:id="e4374f97-9606-4f9b-bc9b-47468a64fa93" url="https://api.openweathermap.org/data/2.5/weather?q=London&amp;appid=9e71734738f2a3a391b85aecccb5eba9"/>
+		<ee:transform doc:name="Transform Message" doc:id="7a540f23-612a-4a0e-a82e-7eb1d96a05bd">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[
+"max-temp": payload.main.temp_max-273 ++"celusis",
+"min-temp": payload.main.temp_min-273 ++"celusis"
+]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

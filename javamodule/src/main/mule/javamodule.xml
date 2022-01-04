@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="7934ec80-5f30-4fb7-9a09-7c2e4dde578e" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="e21ff2a6-e26d-4e2c-b5cd-42cd56e237df" file="dev.yaml" />
+	<flow name="javamoduleFlow" doc:id="962df6c9-9a54-48c6-b7d8-a9db74ed1e45" >
+		<http:listener doc:name="Listener" doc:id="01275aa8-1c48-45f0-8387-b3cd671c4b27" config-ref="HTTP_Listener_config" path="javamodule"/>
+		<java:new doc:name="New" doc:id="bdd296ed-414d-4aba-97df-ff092f83f837" class="com.proj.sample" constructor="sample()" target="objofsample"/>
+		<java:invoke doc:name="Invoke" doc:id="0348175a-7f46-4676-8d3c-604f5fca0e01" class="com.proj.sample" instance="#[vars.objofsample]" method="getBalance(java.lang.String)">
+			<java:args ><![CDATA[#[{
+	arg0: attributes.queryparams.bankName
+}]]]></java:args>
+		</java:invoke>
+	</flow>
+	<flow name="javamoduleFlow1" doc:id="cba34151-3e08-4332-b0d1-73fc11dada1e" >
+		<http:listener doc:name="Listener" doc:id="e8ee761a-7eb3-4402-9165-6ee180c06e2f" config-ref="HTTP_Listener_config" path="javamodule1"/>
+		<java:invoke-static doc:name="Invoke static" doc:id="1cf2b7bb-b9d0-4aed-a48a-c40ff002e7d1" class="com.proj.sample" method="welcome(java.lang.String)"/>
+	</flow>
+</mule>

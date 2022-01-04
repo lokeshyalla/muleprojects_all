@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="domain1Flow" doc:id="6744f8b5-0e8d-4677-96b6-7597a6228f6b" >
+		<http:listener doc:name="Listener" doc:id="e744ed1b-3273-4a91-b245-49fb6d33d21a" path="${http.port}" config-ref="HTTP_domainListenerconfig"/>
+		<db:insert doc:name="Insert" doc:id="018b81a7-b3eb-4a39-a810-0b6a83e2960e" config-ref="Database_domainConfig">
+			<db:sql ><![CDATA[insert into table]]></db:sql>
+		</db:insert>
+	</flow>
+</mule>

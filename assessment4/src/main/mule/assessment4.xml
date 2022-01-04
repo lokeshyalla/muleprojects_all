@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="318e768e-e2fa-491c-a95c-9a380ea65974" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="1de7774d-fec1-41e3-a926-95dfd542c8f7" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="assessment4" />
+	</db:config>
+	<db:config name="Database_Config1" doc:name="Database Config" doc:id="ecd4de00-7b50-4ba3-a6a4-a87cd9e7f7bd" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="assessment4" />
+	</db:config>
+	<flow name="assessment4Flow" doc:id="731972f8-60f5-4bb6-b048-0257a2256500" >
+		<http:listener doc:name="Listener" doc:id="10f4a746-1d1c-41bd-9abd-55dea2e1c51c" config-ref="HTTP_Listener_config" path="/assessment4"/>
+		<db:select doc:name="Select" doc:id="0a7df180-0d8b-4f17-acb1-9d220c4d7b0d" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM assessment4.account_holder;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="247860a4-efb4-4492-9e4f-f2ab0733c1e5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="assessment4Flow1" doc:id="b31ac812-1d28-4f14-9686-c9f70354781e" >
+		<http:listener doc:name="Listener" doc:id="1401832b-62bc-40bb-b859-f76817e3fd1c" config-ref="HTTP_Listener_config" path="/assessmen4"/>
+		<db:insert doc:name="Insert" doc:id="70816dd7-9155-4ccd-9ca0-740a14e6698a" config-ref="Database_Config1">
+			<db:sql ><![CDATA[INSERT INTO assessment4.account_holder (account_number,name,mobile,address)
+ VALUES (106,'sumanth',98497,'hyd');]]></db:sql>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="4a4af5a9-40c2-4d1a-8729-79a3454a6eba" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

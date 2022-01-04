@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1b8e76de-d215-477d-993e-9796a299cc2e" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="subflowFlow" doc:id="f1030a0d-b568-433a-809d-93040bed2c9b" >
+		<http:listener doc:name="Listener" doc:id="4a00903d-7ed8-4762-9d94-d783c7afd24f" config-ref="HTTP_Listener_config" path="/subflow"/>
+		<set-payload value='#["mainflow"]' doc:name="Set Payload" doc:id="9e520246-1e1a-452f-9cca-b685b55bc5ab" />
+		<flow-ref doc:name="Flow Reference" doc:id="18f6f23e-30a4-4a50-85f4-ea49ff53069f" name="subflowSub_Flow"/>
+	</flow>
+	<sub-flow name="subflowSub_Flow" doc:id="c3b9c5ad-a157-4524-9fe4-9480cb970f38" >
+		<try doc:name="Try" doc:id="4e43f781-af3e-469a-b54e-af005ab80910" >
+			<http:request method="GET" doc:name="Request" doc:id="8d4416ee-ce50-436c-873b-926028cb1227" url="uyayuggau.com" />
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="497c123f-70cf-484d-946b-2d24104c04d9" >
+					<set-payload value='#["subflow"]' doc:name="Set Payload" doc:id="78ee4b38-7746-4537-adb1-7ce00a1987a5" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<set-payload value='#["subflow"]' doc:name="Set Payload" doc:id="fee26106-1445-4ea6-a403-c29bc2093dad" />
+	</sub-flow>
+</mule>

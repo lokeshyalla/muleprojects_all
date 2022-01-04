@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="0f0fc74a-1c7b-463e-8b7c-39677c2bc797" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="errorFlow" doc:id="afaa8e6a-0ce3-45c7-a7ca-4e000f45f649" >
+		<http:listener doc:name="Listener" doc:id="4d9ba8e7-7db2-463b-ae19-4cd4bdb499bb" config-ref="HTTP_Listener_config" path="/error"/>
+		<set-payload value='#["main fow"]' doc:name="Set Payload" doc:id="50237c37-8a85-4220-a2f9-f4e1846c10c6" />
+		<http:request method="GET" doc:name="Request" doc:id="65a90e2f-6856-4d34-9a1d-7160b475ce8e" url="hcsyscy.com"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b0896cef-b72f-4476-a2ca-1fb2dc18fd93" type="ANY">
+				<set-payload value='#["ok bye"]' doc:name="Set Payload" doc:id="1186eb8c-63d8-48f8-85a5-8fb511ff5574" />
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="babea10f-5361-4103-992b-48009cef3750" >
+		<db:data-source-connection />
+	</db:config>
+	<flow name="watermarkingFlow" doc:id="77acbdd8-063f-4897-bc17-74ebbeb08cc6" >
+		<db:listener doc:name="On Table Row" doc:id="691e0f1d-e2a5-45d9-b03e-2029b9194797" config-ref="Database_Config" table="production.categories" watermarkColumn="category_id">
+			<scheduling-strategy >
+				<fixed-frequency frequency="10"/>
+			</scheduling-strategy>
+		</db:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="ed64c6fb-f678-47ed-93ae-828b333f12ec" message="#[payload]"/>
+	</flow>
+</mule>

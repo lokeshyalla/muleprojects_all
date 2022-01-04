@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="8f592596-552b-4bef-a725-88c854946028" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="payloadFlow" doc:id="85ebc80c-753a-47e9-bb7f-af3432dab319" >
+		<http:listener doc:name="Listener" doc:id="303c9b76-7c16-4cd0-a454-f0a5a2cf9605" config-ref="HTTP_Listener_config" path="/payload"/>
+		<choice doc:name="Choice" doc:id="488df283-689b-4ea5-9981-fbec82b5c21e" >
+			<when expression="#[isEmpty(payload)]">
+				<raise-error doc:name="Raise error" doc:id="96a30507-036c-44bf-a199-91e1bfc7d753" type="NO:PAYLOAD" description="NO PAYLOAD WAS RECIVED"/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="54ba217f-4c8c-4e27-b3c7-ad789006f830" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/jSON
+---
+"RESPONCE":"NO PAYLOAD WAS RECIVED"]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="64400c28-b9a7-4e24-be55-2946d09728e8" type="NO:PAYLOAD">
+				<ee:transform doc:name="Transform Message" doc:id="1e50199c-74ba-435a-b6e7-2ab9410aa83e" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+"NO PAYLOAD WAS RECIVED"]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="payloadFlow1" doc:id="62224d88-9331-4f49-b1b8-7bd07d91c3ac" >
+		<http:listener doc:name="Listener" doc:id="cdc2eedb-29be-4351-a7c9-a7ae5d8327c3" config-ref="HTTP_Listener_config" path="/pay"/>
+		<set-payload value="#[45411]" doc:name="Set Payload" doc:id="79ce487a-c8cb-4d14-ad35-0d21b8cc04c7" />
+		<try doc:name="Try" doc:id="9d375966-a967-4cf5-ad4b-f387c5185f1e" >
+			<validation:is-number numberType="INTEGER" doc:name="Is number" doc:id="a841d46c-251c-412c-bcc5-8b3c104d0f54" value="#[payload]" minValue="1000" maxValue="5000"/>
+			<error-handler>
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f84bbf6e-6998-428a-878b-43bbb393c4f3" >
+					<set-payload value='#["error handling inside the try block error handler"]' doc:name="Set Payload" doc:id="66dc20f0-c580-42b6-ac0d-e63ed3792138" />
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<ee:transform doc:name="Transform Message" doc:id="1587231c-c6bd-48f7-882d-9ec5596ab5fe" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="payloadFlow2" doc:id="715c1a17-be4c-4156-a6e0-f75e12cb5384" >
+		<http:listener doc:name="Listener" doc:id="86724a2d-b762-412e-9204-994646939d90" config-ref="HTTP_Listener_config" path="/load"/>
+		<choice doc:name="Choice" doc:id="8507a613-b56f-4eab-8c54-3a09c6da1caa" >
+			<when expression="#[isEmpty(payload)]">
+				<raise-error doc:name="Raise error" doc:id="8f093473-2a5e-4660-9ed0-e3494cbb61a8" type="NO:PAYLOAD" description="HANNDLING"/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="ae387141-3c80-4d72-bc6a-2366af078095" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"error handing"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="payloadFlow3" doc:id="10855ea7-5d1e-4164-b345-bb7cc923b651" >
+		<http:listener doc:name="Listener" doc:id="c45e7548-d71f-437e-846b-1d211c09d100" config-ref="HTTP_Listener_config" path="elments"/>
+		<set-payload value="#[55555]" doc:name="Set Payload" doc:id="537449ce-a5b1-40ec-b87d-c85859a03dd2" />
+		<validation:is-number numberType="INTEGER" doc:name="Is number" doc:id="9fdc7211-bbae-4a3a-b516-0f58ff4a12d2" value="#[payload]" minValue="5000" maxValue="50000"/>
+		<ee:transform doc:name="Transform Message" doc:id="fb0bcd44-9b3b-475c-aac8-28b8c5a17f5a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

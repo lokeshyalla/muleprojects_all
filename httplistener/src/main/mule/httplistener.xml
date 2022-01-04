@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="d8b324d4-7c2a-495b-8302-9192efbf9324" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="76b31236-349c-4812-a6ae-0231d218a51d" basePath="lokesh1.us-e2.cloudhub.io" />
+	<http:request-config name="HTTP_Request_configuration1" doc:name="HTTP Request configuration" doc:id="4f0359cf-ec77-41bb-b131-1156da78a9f5" >
+		<http:request-connection host="lokesh1.us-e2.cloudhub.io" />
+	</http:request-config>
+	<flow name="httplistenerFlow" doc:id="27e5ac81-9efd-4bed-9a68-ecd4ed313d31" >
+		<http:listener doc:name="Listener" doc:id="c720aeb2-556f-48e9-8a26-6c44ade77124" config-ref="HTTP_Listener_config" path="/httplistener"/>
+		<set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="dc3de740-c3ed-4b78-89c7-68f727427eec" variableName="Correlationid"/>
+		<logger level="INFO" doc:name="Logger" doc:id="67add003-2eea-4ced-9826-1577c85ab9ca" message="Correlationid-#[vars.Correlationid]"/>
+		<ee:transform doc:name="Transform Message" doc:id="3fe4b6e6-3cd0-4b07-b00f-96d375232b4c">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	"name":"lokeshy"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="8a20c4c0-7ca2-40a6-9f48-4bb5de8ae279" message="#[payload]]"/>
+		<http:request method="CONNECT" doc:name="Request" doc:id="84e2117a-7bc2-46d8-8d2b-4b5fe09188ba" config-ref="HTTP_Request_configuration1" path="/project" target="response">
+			<ee:repeatable-file-store-stream bufferUnit="MB" />
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="08b20280-b97d-4fdc-aecd-9e135faa3cbc" message="Correlationid-#[vars.Correlationid] -received response -#[vars.response]"/>
+	</flow>
+</mule>

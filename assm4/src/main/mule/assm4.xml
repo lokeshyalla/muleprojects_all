@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9db28503-75a6-45cc-ae94-3f3187e58326" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="5008346d-e048-4cfc-a3c5-32f5c1dddd73" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="learn"/>
+	</db:config>
+	<flow name="assm4Flow" doc:id="cb01f96e-0dd7-47c0-992f-31ad76c34668" >
+		<http:listener doc:name="Listener" doc:id="bc0976fa-048c-4a29-8862-60bd8bbb0ce5" config-ref="HTTP_Listener_config" path="/assm4"/>
+		<db:select doc:name="Select" doc:id="5ec371e4-ae03-4fa1-8a12-c2b116e714b4" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM learn.customer_details;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="cd45abdb-b9f9-403f-8e1d-269e5426939d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="71dacbc6-eee5-4650-ab4c-02801ced438b" />
+	</flow>
+</mule>

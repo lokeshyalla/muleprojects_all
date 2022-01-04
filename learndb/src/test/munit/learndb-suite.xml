@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="learndb-suite.xml" />
+	<munit:test name="learndbFlow-fail" doc:id="a017aa81-16fc-4725-9b66-65bb74ec758e" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="3d1957b1-1d20-4de4-ba8a-1bbb0b0466aa" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://learndbFlowfail\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://learndbFlowfail\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to learndbFlow" doc:id="4d8652df-4361-4fe9-8962-f01d7985c278" name="learndbFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="188f38fd-5a34-4bb7-911e-6312d8cae51b" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import learndbFlowfail::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

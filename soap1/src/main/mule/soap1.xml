@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f84de8df-756c-464c-9b5e-bd9a4f946484" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="7040929d-4513-4e30-8b3e-188e1b43feec" >
+		<wsc:connection wsdlLocation="https://www.dataaccess.com/webservicesserver/NumberConversion.wso?WSDL" service="NumberConversion" port="NumberConversionSoap12" address="https://www.dataaccess.com/webservicesserver/NumberConversion.wso" >
+			<wsc:web-service-security actor="http://schemas.xmlsoap.org/soap/actor/next" />
+		</wsc:connection>
+	</wsc:config>
+	<flow name="soap1Flow" doc:id="4588e711-12cc-4172-8fd6-6ca574f39213" >
+		<http:listener doc:name="Listener" doc:id="14058afe-7e6a-413a-9f5c-ef4e537034ef" path="/soap1" config-ref="HTTP_Listener_config"/>
+		<ee:transform doc:name="Transform Message" doc:id="5a687ef9-ee5c-4409-9095-2a583c25e81b">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.dataaccess.com/webservicesserver/
+---
+{
+	ns0#NumberToWords: {
+		ns0#ubiNum:payload.value1
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="1821f8c6-035b-4761-ae0b-6810e9b37c76" config-ref="Web_Service_Consumer_Config" operation="NumberToWords"/>
+		<ee:transform doc:name="Transform Message" doc:id="0f396379-b6d7-4a3c-81f0-902b0e36cea2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0ns ns0 http://www.dataaccess.com/webservicesserver/
+
+output application/json
+---
+{
+	"result":payload.body.ns0#NumberToWordsResponse.ns0#NumberToWordsResult
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

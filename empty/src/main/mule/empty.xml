@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="5ec4a9df-c0cc-4081-8a13-31b4766a6621" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="emptyFlow" doc:id="57f74771-8bc2-487d-825c-bf4d610b6d3d" >
+		<http:listener doc:name="Listener" doc:id="24e9491e-df00-4fc7-a599-432db3e95a83" config-ref="HTTP_Listener_config" path="/empty"/>
+		<choice doc:name="Choice" doc:id="4cac75b9-ed93-4c95-9863-7609d12213f1">
+			<when expression="#[isEmpty(payload)]">
+				<raise-error doc:name="Raise error" doc:id="a801b929-ffff-4896-a5a1-6c10aa19565e" type="NO:PAYLOAD" description="no payload recived"/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="dbb9e338-0136-467e-8bc2-042bf6229d50" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"message":"lokesh"]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="3041f34d-2417-4295-b447-4e94fd028013" type="NO:PAYLOAD">
+				<ee:transform doc:name="Transform Message" doc:id="7befc1c7-dc31-4c7c-8b53-832cca16185b" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"this is empty"]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

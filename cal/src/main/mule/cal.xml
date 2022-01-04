@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2cb13bc7-1816-474a-9a40-0b2ea71de049" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="calFlow" doc:id="3135b4d1-a383-48c8-b95b-4d7d819fd952" >
+		<http:listener doc:name="Listener" doc:id="272bdfa0-a27c-45a4-8f5c-29118dc27c71" config-ref="HTTP_Listener_config" path="/cal"/>
+		<set-payload value='#["this is main flow"]' doc:name="Set Payload" doc:id="08b3b845-c7dc-48af-9f17-317ce8d43fc6" />
+		<flow-ref doc:name="Flow Reference" doc:id="1c2182d1-7a97-4aee-a2cc-7654820f50da" name="calSub_Flow"/>
+	</flow>
+	<sub-flow name="calSub_Flow" doc:id="b8cae21a-5de6-4bcf-b7d3-d025a83f3e14" >
+		<set-payload value='#["this is sub fow"]' doc:name="Set Payload" doc:id="2807c134-379d-403d-8c25-8726a7a1020e" />
+	</sub-flow>
+</mule>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="assessment4-suite.xml" />
+	<munit:test name="assessment4Flow-success" doc:id="596db367-cee5-4e2f-b6f2-00372f88f42d" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="8024dd3c-92c1-45bc-a3ef-30f2f552a97c" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://assessment4Flowsuccess\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://assessment4Flowsuccess\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to assessment4Flow" doc:id="e7929e0d-3e7a-4cad-a5a6-1cc7d282db51" name="assessment4Flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="3e4824dd-beec-4680-bdc3-12d2748c1626" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import assessment4Flowsuccess::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="assessment4Flow1-success" doc:id="08e2dc81-9cc4-4edc-8960-f34a84516bfe" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="97120a23-5ac5-4a03-8afa-e66205885ae5" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://assessment4Flow1success\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://assessment4Flow1success\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to assessment4Flow1" doc:id="d2db32eb-769b-4619-b5d2-7e19d950e78a" name="assessment4Flow1"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="9ccea1a0-8ff3-4fec-a537-e083b67c8804" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import assessment4Flow1success::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="assessment4Flow1-success1" doc:id="74146e0a-86d0-47cb-b57b-eaf8417c536f" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="5757b2aa-5d87-4b4f-9087-f695051f28db" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://assessment4Flow1success1\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://assessment4Flow1success1\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to assessment4Flow1" doc:id="d0bed7b0-efe0-4aff-b696-50752bd8fd5b" name="assessment4Flow1"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="7898fabe-f9a1-45e7-88d4-c1a00278b429" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import assessment4Flow1success1::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

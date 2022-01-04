@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="24750b94-a10a-485c-9685-d88857088ba6" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="assm1Flow" doc:id="2efb08fe-6508-4020-bec6-721140a64593" >
+		<http:listener doc:name="Listener" doc:id="9b5c1750-be7b-4509-84bb-69f40de78e66" config-ref="HTTP_Listener_config" path="/assm1"/>
+		<ee:transform doc:name="Transform Message" doc:id="1093d8f4-786f-44b0-aaf5-97ef1433f701" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output xml
+---
+{
+"city name" :payload.weather.name,
+"minimum temp":payload.list.temp_min,
+"Maximum temp" :payload.list.temp_max,
+"pressure" :payload.list.Pressure,
+"sealevel":payload.list.sea_level
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

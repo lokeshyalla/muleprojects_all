@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="dafe893f-b084-45e4-9fae-9518002ea71b" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="dw1labFlow" doc:id="9252f3a0-0e39-494f-b22a-53d324cc5a6f" >
+		<http:listener doc:name="Listener" doc:id="4066b13f-e004-4714-bc96-06e4c8d50a21" config-ref="HTTP_Listener_config" path="/dw1lab"/>
+		<set-variable value="#[attributes.queryParams.q1]" doc:name="Set Variable" doc:id="025d5996-85f1-4207-b36f-e7d3f86c9dc8" variableName="dwName"/>
+		<ee:transform doc:name="Transform Message" doc:id="9a14c055-ebeb-4d1d-a124-8c9c63d1e6d5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	replacedname: vars.dwname replace "esh" with "123"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
